@@ -3,7 +3,7 @@ import connection from "../db.js";
 export async function getProdutos(req, res) {
   try {
     const { rows: produtos } =
-      await db.query(`SELECT produtos.*,usuarios.nome AS "nomeUsuario" FROM produtos 
+      await connection.query(`SELECT produtos.*,usuarios.nome AS "nomeUsuario" FROM produtos 
     JOIN usuarios ON usuarios.id="produtos.idUsuario" `);
 
     res.send(produtos);
@@ -17,14 +17,15 @@ export async function criarProduto(req, res) {
   try {
     const { nome, preco } = req.body;
     const { user } = res.locals;
-    const result = await db.query(`SELECT id FROM produtos WHERE nome=$1`, [
-      nome,
-    ]);
+    const result = await connection.query(
+      `SELECT id FROM produtos WHERE nome=$1`,
+      [nome]
+    );
     if (result.rows.length > 0) {
       return res.status(409).send("Produto já cadastrado");
     }
 
-    await db.query(
+    await connection.query(
       `
       INSERT INTO produtos (nome, preco, "idUsuario")
         VALUES ($1, $2, $3)
@@ -43,7 +44,7 @@ export async function deletarProduto(req, res) {
   const { id } = req.params;
   const { user } = res.locals;
   try {
-    const usuario = await db.query(
+    const usuario = await connection.query(
       `SELECT * FROM produtos WHERE id=$1 and "idUsuario"=$2`,
       [id, user.id]
     );
@@ -52,7 +53,7 @@ export async function deletarProduto(req, res) {
         .status(400)
         .send("Você não pode deletar um produto que não te pertence!");
     }
-    await db.query(
+    await connection.query(
       `
       DELETE FROM produtos WHERE id=$1
     `,
@@ -71,7 +72,7 @@ export async function atualizarProduto(req, res) {
     const { id } = req.params;
     const { user } = res.locals;
     const { nome, preco } = req.body;
-    const usuario = await db.query(
+    const usuario = await connection.query(
       `SELECT * FROM produtos WHERE id=$1 and "idUsuario"=$2`,
       [id, user.id]
     );
@@ -80,7 +81,7 @@ export async function atualizarProduto(req, res) {
         .status(400)
         .send("Você não pode atualizar um produto que não te pertence!");
     }
-    await db.query(
+    await connection.query(
       `
       UPDATE produtos
         SET nome=$1, preco=$2

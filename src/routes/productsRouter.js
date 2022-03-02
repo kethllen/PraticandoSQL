@@ -5,19 +5,19 @@ import {
   deletarProduto,
   atualizarProduto,
 } from "../controllers/produtosController.js";
-import validSchema from "../middlewares/validaSchemaMiddleware.js";
+import validaSchemaMiddleware from "../middlewares/validaSchemaMiddleware.js";
 import validaTokenMiddleware from "../middlewares/validaTokenMiddleware.js";
 import produtoSchema from "../schemas/produtoSchema.js";
 
 const productsRouter = Router();
 productsRouter.get("/produtos", getProdutos);
-productsRouter.put("/produtos/:id", validaTokenMiddleware(), atualizarProduto);
+productsRouter.put("/produtos/:id", validaTokenMiddleware, atualizarProduto);
 productsRouter.post(
   "/produtos",
-  validaTokenMiddleware(),
+  validaTokenMiddleware,
   validaSchemaMiddleware(produtoSchema),
   criarProduto
 );
-productsRouter.delete("/produtos/:id", validaTokenMiddleware(), deletarProduto);
+productsRouter.delete("/produtos/:id", validaTokenMiddleware, deletarProduto);
 
 export default productsRouter;

@@ -13,18 +13,18 @@ const categoriasRouter = Router();
 categoriasRouter.get("/categorias", getCategorias);
 categoriasRouter.put(
   "/categorias/:id",
-  validaTokenMiddleware(),
+  validaTokenMiddleware,
   atualizarCategoria
 );
 categoriasRouter.post(
   "/categorias",
-  validaTokenMiddleware(),
+  validaTokenMiddleware,
   validaSchemaMiddleware(categoriaSchema),
   criarCategoria
 );
 categoriasRouter.delete(
   "/categorias/:id",
-  validaTokenMiddleware(),
+  validaTokenMiddleware,
   deletarCategoria
 );
 
